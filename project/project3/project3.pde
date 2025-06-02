@@ -1,14 +1,17 @@
+
+import java.awt.Robot;
+
 boolean wkey, akey, skey, dkey;
 float eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ;
 float leftRightHeadAngle, UpdownHeadAngle;
 
-
+Robot rbt;
 
 
 
 
 void setup() {
-  size(800, 600, P3D);
+  fullScreen(P3D);
   textureMode(NORMAL);
   wkey = akey = skey = dkey = false;
 
@@ -26,6 +29,16 @@ void setup() {
 
   leftRightHeadAngle = radians(270);
   noCursor();
+  
+  try{
+  rbt = new Robot();
+ 
+  
+  }
+ catch (Exception e){
+ e.printStackTrace();
+ 
+ } 
 }
 void draw() {
   background(0);
@@ -68,8 +81,8 @@ void controlCamera() {
   }
   
   
-  leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.01;
-  UpdownHeadAngle = UpdownHeadAngle + (mouseY -pmouseY)*0.01;
+  leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.004;
+  UpdownHeadAngle = UpdownHeadAngle + (mouseY -pmouseY)*0.004;
 
 
   if (UpdownHeadAngle> PI/2.5) UpdownHeadAngle = PI/2.5;
@@ -80,6 +93,11 @@ void controlCamera() {
   focusY = eyeY + tan(UpdownHeadAngle)*300;
   
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
+  
+  if (mouseX > width-2) rbt.mouseMove (2,mouseY);
+  else if (mouseX < 2) rbt.mouseMove(width-2,mouseY);
+  
+  
 }
 void drawFocalPoint() {
   pushMatrix();
