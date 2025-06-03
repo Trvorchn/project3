@@ -6,7 +6,14 @@ float eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ;
 float leftRightHeadAngle, UpdownHeadAngle;
 
 Robot rbt;
+color black = #000000;
+color white = #FFFFFF;
 
+
+
+
+int gridSize;
+PImage map;
 
 
 
@@ -29,16 +36,16 @@ void setup() {
 
   leftRightHeadAngle = radians(270);
   noCursor();
-  
-  try{
-  rbt = new Robot();
- 
-  
+
+  try {
+    rbt = new Robot();
   }
- catch (Exception e){
- e.printStackTrace();
- 
- } 
+  catch (Exception e) {
+    e.printStackTrace();
+  }
+
+  map = loadImage("map.png");
+  gridSize = 100;
 }
 void draw() {
   background(0);
@@ -46,7 +53,8 @@ void draw() {
   drawFloor();
   controlCamera();
   drawFocalPoint();
-  //println(focusX, focusZ);
+  drawMap();
+  
 }
 
 void drawFloor() {
@@ -61,26 +69,28 @@ void drawFloor() {
 void controlCamera() {
 
 
-  
-  if (wkey){
+
+  if (wkey) {
     eyeX = eyeX +  cos(leftRightHeadAngle)*10;
-  eyeZ = eyeZ + sin(leftRightHeadAngle)*10;;
-  
+    eyeZ = eyeZ + sin(leftRightHeadAngle)*10;
+    ;
   }
-  if (skey){ 
-   eyeX = eyeX -  cos(leftRightHeadAngle)*10;
-  eyeZ = eyeZ-  sin(leftRightHeadAngle)*10;;
-}
-  if (akey){
-   eyeX = eyeX -  cos(leftRightHeadAngle+PI/2)*10;
-  eyeZ = eyeZ  -  sin(leftRightHeadAngle+PI/2)*10;
+  if (skey) {
+    eyeX = eyeX -  cos(leftRightHeadAngle)*10;
+    eyeZ = eyeZ-  sin(leftRightHeadAngle)*10;
+    ;
   }
-  if (dkey){ 
-   eyeX = eyeX -  cos(leftRightHeadAngle-PI/2)*10;
-  eyeZ = eyeZ -  sin(leftRightHeadAngle-PI/2)*10;;
+  if (akey) {
+    eyeX = eyeX -  cos(leftRightHeadAngle+PI/2)*10;
+    eyeZ = eyeZ  -  sin(leftRightHeadAngle+PI/2)*10;
   }
-  
-  
+  if (dkey) {
+    eyeX = eyeX -  cos(leftRightHeadAngle-PI/2)*10;
+    eyeZ = eyeZ -  sin(leftRightHeadAngle-PI/2)*10;
+    ;
+  }
+
+
   leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.004;
   UpdownHeadAngle = UpdownHeadAngle + (mouseY -pmouseY)*0.004;
 
@@ -91,13 +101,11 @@ void controlCamera() {
   focusX = eyeX+ cos(leftRightHeadAngle)*300;
   focusZ = eyeZ+ sin(leftRightHeadAngle)*300;
   focusY = eyeY + tan(UpdownHeadAngle)*300;
-  
+
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
-  
-  if (mouseX > width-2) rbt.mouseMove (2,mouseY);
-  else if (mouseX < 2) rbt.mouseMove(width-2,mouseY);
-  
-  
+
+  if (mouseX > width-2) rbt.mouseMove (2, mouseY);
+  else if (mouseX < 2) rbt.mouseMove(width-2, mouseY);
 }
 void drawFocalPoint() {
   pushMatrix();
@@ -105,6 +113,26 @@ void drawFocalPoint() {
   sphere(5);
   popMatrix();
 }
+
+void drawMap() {
+  for (int x = 0; x < map.width; x++) {
+    for ( int y = 0; y < map.height; y++) {
+      color c = map.get(x, y);
+      if (c!=white) {
+        pushMatrix();
+        fill(c);
+        stroke(100);
+        translate(x*gridSize-2000, height/2, y*gridSize-2000);
+        box(gridSize, height, gridSize);
+        popMatrix();
+      }
+    }
+  }
+}
+
+
+
+
 
 void keyPressed() {
 
