@@ -8,7 +8,7 @@ float leftRightHeadAngle, UpdownHeadAngle;
 Robot rbt;
 color black = #000000;
 color white = #FFFFFF;
-color dullBlue = #006F9D; // gravel
+color dullBlue = #006F9D; 
 
 boolean skipFrame;
 
@@ -85,36 +85,38 @@ void setup() {
   skipFrame = false;
 }
 void draw() {
-  background(#8BE5FF);
-  drawFloor(-2000,2000,height,100);
-  drawFloor(-2000,2000,height-gridSize*3,100);
+  background(0);
+
+  pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
+  drawFloor(-2000, 2000, height, gridSize);
+  drawFloor(-2000, 2000, height-gridSize*4, gridSize);
   controlCamera();
   drawFocalPoint();
   drawMap();
 }
 
-void drawFloor(int start,int end, int level, int gap) {
+void drawFloor(int start, int end, int level, int gap) {
 
   stroke(255);
   strokeWeight(1);
   int x = start;
   int z = start;
-  while(x<end){
-      line(x, level, start, x, level, end);
-    line(start, level, z, end, level, z);
-  
-  
-  }
-x = x + gap;
-z = z + gap;
+  while (z<end) {
+    texturedCube(x, level, z, oakTop, gap);
+    x = x + gap;
 
+    if (x >= end) {
+      x = start;
+      z = z + gap;
+    }
+  }
 }
 
 void controlCamera() {
 
 
 
-  if (wkey) {
+  if (wkey && canMoveForward()) {
     eyeX = eyeX +  cos(leftRightHeadAngle)*10;
     eyeZ = eyeZ + sin(leftRightHeadAngle)*10;
     ;
@@ -122,7 +124,7 @@ void controlCamera() {
   if (skey) {
     eyeX = eyeX -  cos(leftRightHeadAngle)*10;
     eyeZ = eyeZ-  sin(leftRightHeadAngle)*10;
-    ;
+    
   }
   if (akey) {
     eyeX = eyeX -  cos(leftRightHeadAngle+PI/2)*10;
@@ -163,6 +165,32 @@ void controlCamera() {
     UpdownHeadAngle = UpdownHeadAngle + (mouseY - pmouseY)*0.01;
   }
 }
+
+
+boolean canMoveForward() {
+
+  float fwdx, fwdy, fwdz;
+  int mapx, mapy;
+
+
+  fwdx = eyeX+ cos(leftRightHeadAngle)*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle)*200;
+  fwdy = eyeY;
+
+  mapx = int(fwdx-2000)/gridSize;
+  mapy = int(fwdz+2000)/gridSize;
+
+  if (map.get(mapx, mapy) == white) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+
+
+
 void drawFocalPoint() {
   pushMatrix();
   translate(focusX, focusY, focusZ);
@@ -177,14 +205,13 @@ void drawMap() {
       if (c==black) {
         texturedCube(x*gridSize-2000, height-gridSize, y*gridSize-2000, stone, gridSize);
         texturedCube(x*gridSize-2000, height-gridSize*2, y*gridSize-2000, stone, gridSize);
-      texturedCube(x*gridSize-2000, height-gridSize*3, y*gridSize-2000, stone, gridSize);
-
+        texturedCube(x*gridSize-2000, height-gridSize*3, y*gridSize-2000, stone, gridSize);
       }
       if (c == dullBlue) {
 
-        texturedCube(x*gridSize-2000, height-gridSize, y*gridSize-2000, gravel, gridSize);
-        texturedCube(x*gridSize-2000, height-gridSize*2, y*gridSize-2000, gravel, gridSize);
-      texturedCube(x*gridSize-2000, height-gridSize*3, y*gridSize-2000, gravel, gridSize);
+        texturedCube(x*gridSize-2000, height-gridSize, y*gridSize-2000, oakSide, gridSize);
+        texturedCube(x*gridSize-2000, height-gridSize*2, y*gridSize-2000, oakSide, gridSize);
+        texturedCube(x*gridSize-2000, height-gridSize*3, y*gridSize-2000, oakSide, gridSize);
       }
     }
   }
