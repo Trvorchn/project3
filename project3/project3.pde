@@ -8,7 +8,7 @@ float leftRightHeadAngle, UpdownHeadAngle;
 Robot rbt;
 color black = #000000;
 color white = #FFFFFF;
-color dullBlue = #006F9D; // gravel
+color dullBlue = #006F9D; 
 
 boolean skipFrame;
 
@@ -86,8 +86,8 @@ void setup() {
 }
 void draw() {
   background(0);
-  
-  pointLight(255,255,255,eyeX,eyeY,eyeZ);
+
+  pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
   drawFloor(-2000, 2000, height, gridSize);
   drawFloor(-2000, 2000, height-gridSize*4, gridSize);
   controlCamera();
@@ -104,19 +104,19 @@ void drawFloor(int start, int end, int level, int gap) {
   while (z<end) {
     texturedCube(x, level, z, oakTop, gap);
     x = x + gap;
-  
-  if (x >= end) {
-    x = start;
-    z = z + gap;
-  }  
-}
+
+    if (x >= end) {
+      x = start;
+      z = z + gap;
+    }
+  }
 }
 
 void controlCamera() {
 
 
 
-  if (wkey) {
+  if (wkey && canMoveForward()) {
     eyeX = eyeX +  cos(leftRightHeadAngle)*10;
     eyeZ = eyeZ + sin(leftRightHeadAngle)*10;
     ;
@@ -124,13 +124,13 @@ void controlCamera() {
   if (skey) {
     eyeX = eyeX -  cos(leftRightHeadAngle)*10;
     eyeZ = eyeZ-  sin(leftRightHeadAngle)*10;
-    ;
+    
   }
-  if (akey) {
+  if (akey && canMoveLeft()) {
     eyeX = eyeX -  cos(leftRightHeadAngle+PI/2)*10;
     eyeZ = eyeZ  -  sin(leftRightHeadAngle+PI/2)*10;
   }
-  if (dkey) {
+  if (dkey && canMoveRight()) {
     eyeX = eyeX -  cos(leftRightHeadAngle-PI/2)*10;
     eyeZ = eyeZ -  sin(leftRightHeadAngle-PI/2)*10;
     ;
@@ -165,6 +165,90 @@ void controlCamera() {
     UpdownHeadAngle = UpdownHeadAngle + (mouseY - pmouseY)*0.01;
   }
 }
+
+
+boolean canMoveForward() {
+
+  float fwdx, fwdy, fwdz;
+  int mapx, mapy;
+
+
+  fwdx = eyeX+ cos(leftRightHeadAngle)*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle)*200;
+  fwdy = eyeY;
+
+  mapx = int(fwdx+2000)/gridSize;
+  mapy = int(fwdz+2000)/gridSize;
+
+  if (map.get(mapx, mapy) == white) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+boolean canMoveLeft() {
+
+  float fwdx, fwdy, fwdz;
+  int mapx, mapy;
+
+
+  fwdx = eyeX+ cos(leftRightHeadAngle-90)*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle-90)*200;
+  fwdy = eyeY;
+
+  mapx = int(fwdx+2000)/gridSize;
+  mapy = int(fwdz+2000)/gridSize;
+
+  if (map.get(mapx, mapy) == white) {
+    return true;
+  } else {
+    return false;
+  }
+}
+boolean canMoveRight() {
+
+  float fwdx, fwdy, fwdz;
+  int mapx, mapy;
+
+
+  fwdx = eyeX+ cos(leftRightHeadAngle+90)*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle+90)*200;
+  fwdy = eyeY;
+
+  mapx = int(fwdx+2000)/gridSize;
+  mapy = int(fwdz+2000)/gridSize;
+
+  if (map.get(mapx, mapy) == white) {
+    return true;
+  } else {
+    return false;
+  }
+}
+boolean canMoveBack() {
+
+  float fwdx, fwdy, fwdz;
+  int mapx, mapy;
+
+
+  fwdx = eyeX+ cos(leftRightHeadAngle)*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle)*200;
+  fwdy = eyeY;
+
+  mapx = int(fwdx+2000)/gridSize;
+  mapy = int(fwdz+2000)/gridSize;
+
+  if (map.get(mapx, mapy) == white) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+
+
 void drawFocalPoint() {
   pushMatrix();
   translate(focusX, focusY, focusZ);
