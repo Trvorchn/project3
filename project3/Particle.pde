@@ -38,4 +38,4 @@ class Particle extends GameObject {
     popMatrix();
     lives--;
   }
-}t
+}

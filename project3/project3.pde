@@ -25,12 +25,17 @@ PImage oakSide, oakTop;
 
 ArrayList <GameObject> objects;
 
+PImage bgImage;
 
-
+color bottomColor = color(255, 214, 165);  // soft warm orange
+color topColor = color(166, 200, 255);     // light blue sky
 
 void setup() {
   fullScreen(P3D);
   textureMode(NORMAL);
+
+  bgImage = loadImage("palais.jpg");
+  //bgImage.resize(400, 400);
 
   objects = new ArrayList<GameObject>();
 
@@ -60,7 +65,7 @@ void setup() {
 
 
 
-  leftRightHeadAngle =radians(270);
+  leftRightHeadAngle =radians(360);
   noCursor();
 
   try {
@@ -71,25 +76,33 @@ void setup() {
   }
 
   map = loadImage("map.png");
-  gridSize = 100;
+  gridSize = 200;
   skipFrame = false;
 }
 void draw() {
-  background(0);
+  // 1) Draw background gradient in screen space (disable depth test)
+  hint(DISABLE_DEPTH_TEST);
+  noLights();
+  noStroke();
+  for (int y = 0; y < height; y++) {
+    float amt = map(y, 0, height, 0, 1);
+    fill(lerpColor(bottomColor, topColor, amt));
+    rect(0, y, width, 1);
+  }
+  hint(ENABLE_DEPTH_TEST);
 
-if (key == ' ') { 
-  objects.add(new Bullet());
-}
+  // 2) Setup your 3D camera AFTER drawing the background
+  camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
 
+  // 3) Enable lights for 3D objects
   pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
+
+  // 4) Draw your floor and objects here
   drawFloor(-2000, 2000, height, gridSize);
-  drawFloor(-2000, 2000, height-gridSize*4, gridSize);
-  controlCamera();
   drawFocalPoint();
-  drawMap();
 
   int i = 0;
-  while ( i < objects.size()) {
+  while (i < objects.size()) {
     GameObject obj = objects.get(i);
     obj.act();
     obj.show();
@@ -99,4 +112,7 @@ if (key == ' ') {
       i++;
     }
   }
+
+  // 5) Update camera control at end of draw
+  controlCamera();
 }

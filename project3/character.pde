@@ -1,16 +1,12 @@
 void controlCamera() {
-
-
-
+  
   if (wkey && canMoveForward()) {
     eyeX = eyeX +  cos(leftRightHeadAngle)*10;
     eyeZ = eyeZ + sin(leftRightHeadAngle)*10;
-    ;
   }
   if (skey) {
     eyeX = eyeX -  cos(leftRightHeadAngle)*10;
     eyeZ = eyeZ-  sin(leftRightHeadAngle)*10;
-    
   }
   if (akey && canMoveLeft()) {
     eyeX = eyeX -  cos(leftRightHeadAngle+PI/2)*10;
@@ -19,12 +15,11 @@ void controlCamera() {
   if (dkey && canMoveRight()) {
     eyeX = eyeX -  cos(leftRightHeadAngle-PI/2)*10;
     eyeZ = eyeZ -  sin(leftRightHeadAngle-PI/2)*10;
-    ;
   }
 
 
-  leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.000000000001;
-  upDownHeadAngle = upDownHeadAngle + (mouseY -pmouseY)*0.00000000000001;
+  leftRightHeadAngle = leftRightHeadAngle + (mouseX - pmouseX)*0.001;
+  upDownHeadAngle = upDownHeadAngle + (mouseY -pmouseY)*0.001;
 
 
   if (upDownHeadAngle> PI/2.5) upDownHeadAngle = PI/2.5;
@@ -51,6 +46,7 @@ void controlCamera() {
     upDownHeadAngle = upDownHeadAngle + (mouseY - pmouseY)*0.01;
   }
 }
+
 
 
 boolean canMoveForward() {
@@ -118,8 +114,8 @@ boolean canMoveBack() {
   int mapx, mapy;
 
 
-  fwdx = eyeX+ cos(leftRightHeadAngle)*200;
-  fwdz = eyeZ+ sin(leftRightHeadAngle)*200;
+  fwdx = eyeX+ cos(leftRightHeadAngle+radians(180))*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle+radians(180))*200;
   fwdy = eyeY;
 
   mapx = int(fwdx+2000)/gridSize;
@@ -138,7 +134,7 @@ boolean canMoveBack() {
 void drawFocalPoint() {
   pushMatrix();
   translate(focusX, focusY, focusZ);
-  stroke(255,0,0);
+  stroke(255, 0, 0);
   sphere(5);
   popMatrix();
 }
