@@ -1,4 +1,3 @@
-
 import java.awt.Robot;
 
 boolean wkey, akey, skey, dkey;
@@ -9,40 +8,54 @@ Robot rbt;
 color black = #000000;
 color white = #FFFFFF;
 color dullBlue = #006F9D;
+color grey = #C3C3C3;
+color lightBlack = #362C33;
 
 boolean skipFrame;
 
-
 int gridSize;
 PImage map;
+PImage bgImage;
+
+ArrayList<Cloud> clouds;
+PImage cloudTexture;
 
 
-PImage stone ;
+
+PImage stone;
 PImage dirtSide, dirtTop, dirtBottom;
 PImage diamond;
 PImage gravel;
 PImage oakSide, oakTop;
+PImage coal, quartz;
 
 ArrayList <GameObject> objects;
 
-PImage bgImage;
 
-color bottomColor = color(255, 214, 165);  // soft warm orange
-color topColor = color(166, 200, 255);     // light blue sky
+
+float skyTimer = 0;
+color dayColor = color(166, 200, 255);
+color nightColor = color(10, 10, 35);
+
 
 void setup() {
   fullScreen(P3D);
   textureMode(NORMAL);
 
+cloudTexture = loadImage("cloud.png"); // add this image to your data folder
+clouds = new ArrayList<Cloud>();
+for (int i = 0; i < 20; i++) {
+  clouds.add(new Cloud());
+}
+
   bgImage = loadImage("palais.jpg");
-  //bgImage.resize(400, 400);
 
   objects = new ArrayList<GameObject>();
 
   wkey = akey = skey = dkey = false;
 
   eyeX = width/2;
-  eyeY = 9*height/10.75;
+  eyeY = 9 * height / 10.75;
   eyeZ = 0;
 
   focusX = width/2;
@@ -53,19 +66,18 @@ void setup() {
   tiltY = 1;
   tiltZ = 0;
 
+  diamond = loadImage("Diamond.png");
+  dirtSide = loadImage("dirtSide.png");
+  dirtTop = loadImage("dirtTop.png");
+  dirtBottom = loadImage("dirtBottom.png");
+  oakSide = loadImage("oakSide.png");
+  oakTop = loadImage("oakTop.png");
+  gravel = loadImage("gravel.png");
+  stone = loadImage("stone.png");
+  quartz = loadImage("quartz.png");
+  coal = loadImage("coal.png");
 
-  diamond = loadImage ("Diamond.png");
-  dirtSide = loadImage ("dirtSide.png");
-  dirtTop = loadImage ("dirtTop.png");
-  dirtBottom = loadImage ("dirtBottom.png");
-  oakSide = loadImage ("oakSide.png");
-  oakTop = loadImage ("oakTop.png");
-  gravel = loadImage ("gravel.png");
-  stone = loadImage ("stone.png");
-
-
-
-  leftRightHeadAngle =radians(360);
+  leftRightHeadAngle = radians(360);
   noCursor();
 
   try {
@@ -79,25 +91,34 @@ void setup() {
   gridSize = 200;
   skipFrame = false;
 }
-void draw() {
-  // 1) Draw background gradient in screen space (disable depth test)
-  hint(DISABLE_DEPTH_TEST);
-  noLights();
-  noStroke();
-  for (int y = 0; y < height; y++) {
-    float amt = map(y, 0, height, 0, 1);
-    fill(lerpColor(bottomColor, topColor, amt));
-    rect(0, y, width, 1);
-  }
-  hint(ENABLE_DEPTH_TEST);
 
-  // 2) Setup your 3D camera AFTER drawing the background
+void draw() {
+
+
+  background(white);
+
+  drawSkyBackground();
+  for (Cloud c : clouds) {
+  c.update();
+  c.show();
+}
+
+  hint(ENABLE_DEPTH_TEST);
+  lights();
+
   camera(eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ);
 
-  // 3) Enable lights for 3D objects
   pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
 
-  // 4) Draw your floor and objects here
+  pushMatrix();
+  translate(width/10, height/10, -3500);
+  scale(7);
+  imageMode(CENTER);
+  image(bgImage, 0, 0);
+  popMatrix();
+
+
+
   drawFloor(-2000, 2000, height, gridSize);
   drawFocalPoint();
 
@@ -113,6 +134,9 @@ void draw() {
     }
   }
 
-  // 5) Update camera control at end of draw
   controlCamera();
+
+  if (key == ' ') {
+    objects.add(new Bullet());
+  }
 }
