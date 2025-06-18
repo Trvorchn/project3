@@ -7,8 +7,8 @@ class Cloud {
     x = random(-5000, 5000);
     z = random(-5000, 5000);
     y = random(-800, -300);  // high in sky
-    speed = random(0.2, 0.5);
-    size = random(200, 400);
+    speed = random(0.2, 1);
+    size = random(200, 800);
   }
 
   void update() {
@@ -19,8 +19,8 @@ class Cloud {
   void show() {
     pushMatrix();
     translate(x, y, z);
-    rotateX(HALF_PI); // rotate to face downwards
-    tint(255, 150);   // semi-transparent
+    rotateX(HALF_PI); 
+    tint(255); 
     imageMode(CENTER);
     image(cloudTexture, 0, 0, size, size);
     popMatrix();

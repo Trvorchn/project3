@@ -111,7 +111,7 @@ void draw() {
   pointLight(255, 255, 255, eyeX, eyeY, eyeZ);
 
   pushMatrix();
-  translate(width/10, height/10, -3500);
+  translate(width/10, height-1500, -4000);
   scale(7);
   imageMode(CENTER);
   image(bgImage, 0, 0);
@@ -119,7 +119,7 @@ void draw() {
 
 
 
-  drawFloor(-2000, 2000, height, gridSize);
+  drawFloor(-2000, 2000,-3500,2000, height, gridSize);
   drawFocalPoint();
 
   int i = 0;
