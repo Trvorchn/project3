@@ -5,11 +5,14 @@ float eyeX, eyeY, eyeZ, focusX, focusY, focusZ, tiltX, tiltY, tiltZ;
 float leftRightHeadAngle, upDownHeadAngle;
 
 Robot rbt;
-color black = #000000;
+color black = #000000;//sandstone
 color white = #FFFFFF;
-color dullBlue = #006F9D;
-color grey = #C3C3C3;
+color dullBlue = #7092BE;//sandstone
+color grey = #C3C3C3;//sandstone
 color lightBlack = #362C33;
+color green = #115B29;// leaves
+
+
 
 boolean skipFrame;
 
@@ -27,9 +30,11 @@ PImage dirtSide, dirtTop, dirtBottom;
 PImage diamond;
 PImage gravel;
 PImage oakSide, oakTop;
-PImage coal, quartz;
+PImage coal, quartz, sandStone,leaf;
 
 ArrayList <GameObject> objects;
+ArrayList<Person> people;
+PImage[] personImages;
 
 
 
@@ -41,12 +46,17 @@ color nightColor = color(10, 10, 35);
 void setup() {
   fullScreen(P3D);
   textureMode(NORMAL);
+  
 
-cloudTexture = loadImage("cloud.png"); // add this image to your data folder
-clouds = new ArrayList<Cloud>();
-for (int i = 0; i < 20; i++) {
-  clouds.add(new Cloud());
-}
+  map = loadImage("map.png");
+  gridSize = 200;
+  skipFrame = false;
+
+  cloudTexture = loadImage("cloud.png");
+  clouds = new ArrayList<Cloud>();
+  for (int i = 0; i < 20; i++) {
+    clouds.add(new Cloud());
+  }
 
   bgImage = loadImage("palais.jpg");
 
@@ -76,6 +86,30 @@ for (int i = 0; i < 20; i++) {
   stone = loadImage("stone.png");
   quartz = loadImage("quartz.png");
   coal = loadImage("coal.png");
+  sandStone = loadImage("sandStone.png");
+  leaf = loadImage("leaf.png");
+
+personImages = new PImage[3]; // Add more if you have more images
+personImages[0] = loadImage("person1.png");
+personImages[1] = loadImage("person2.png");
+personImages[2] = loadImage("person3.png");
+
+people = new ArrayList<Person>();
+int attempts = 0;
+while (people.size() < 50 && attempts < 1000) {
+  attempts++;
+  int mx = int(random(map.width));
+  int mz = int(random(map.height));
+  color blockColor = map.get(mx, mz);
+
+  if (blockColor == white) {
+    float x = mx * gridSize - 2000;
+    float z = mz * gridSize - 2000;
+    float y = height - gridSize-100;
+    PImage img = personImages[int(random(personImages.length))];
+    people.add(new Person(x, y, z, img));
+  }
+}
 
   leftRightHeadAngle = radians(360);
   noCursor();
@@ -87,9 +121,6 @@ for (int i = 0; i < 20; i++) {
     e.printStackTrace();
   }
 
-  map = loadImage("map.png");
-  gridSize = 200;
-  skipFrame = false;
 }
 
 void draw() {
@@ -98,10 +129,17 @@ void draw() {
   background(white);
 
   drawSkyBackground();
-  for (Cloud c : clouds) {
-  c.update();
-  c.show();
+
+  
+  for (Person p : people) {
+  p.act();
+  p.show();
 }
+ 
+  for (Cloud c : clouds) {
+    c.update();
+    c.show();
+  }
 
   hint(ENABLE_DEPTH_TEST);
   lights();
@@ -119,9 +157,9 @@ void draw() {
 
 
 
-  drawFloor(-2000, 2000,-3500,2000, height, gridSize);
+  drawFloor(-2000, 2000, -3500, 2000, height, gridSize);
   drawFocalPoint();
-
+  drawMap();
   int i = 0;
   while (i < objects.size()) {
     GameObject obj = objects.get(i);
@@ -135,8 +173,4 @@ void draw() {
   }
 
   controlCamera();
-
-  if (key == ' ') {
-    objects.add(new Bullet());
-  }
 }

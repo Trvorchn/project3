@@ -15,6 +15,7 @@ class GameObject {
   }
 
   void act() {
+
   }
   void show() {
     pushMatrix();

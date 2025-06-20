@@ -6,7 +6,7 @@ class Cloud {
   Cloud() {
     x = random(-5000, 5000);
     z = random(-5000, 5000);
-    y = random(-800, -300);  // high in sky
+    y = random(-900, -1000);
     speed = random(0.2, 1);
     size = random(200, 800);
   }
