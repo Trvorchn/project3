@@ -15,6 +15,7 @@ class Particle extends GameObject {
     vel = new PVector (vx, vy, vz);
     vel.setMag(speed);
     gravity = new PVector(0, 5, 0);
+     color(255, 255, random(50, 100));
   }
 
   void act() {

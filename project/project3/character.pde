@@ -114,8 +114,8 @@ boolean canMoveBack() {
   int mapx, mapy;
 
 
-  fwdx = eyeX+ cos(leftRightHeadAngle)*200;
-  fwdz = eyeZ+ sin(leftRightHeadAngle)*200;
+  fwdx = eyeX+ cos(leftRightHeadAngle+180)*200;
+  fwdz = eyeZ+ sin(leftRightHeadAngle+180)*200;
   fwdy = eyeY;
 
   mapx = int(fwdx+2000)/gridSize;
